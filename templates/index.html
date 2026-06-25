@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScanMatch — Resume vs. Job Description Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="grid-overlay"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◎</span>
+    <span class="brand-name">ScanMatch</span>
+  </div>
+  <div class="topbar-sub">ATS Keyword Scanner</div>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">// trie_heap_hashset.engine</p>
+    <h1>See your resume the way the<br>ATS robot sees it.</h1>
+    <p class="hero-sub">Drop in a resume and a job posting. A Trie pulls out known skill
+      phrases, a min-heap ranks the job description's top keywords, and hash sets
+      compute what's matched and what's missing — the same signal an ATS parser keys off
+      before a human ever opens the file.</p>
+  </section>
+
+  <section class="scan-bed" id="scan-bed">
+    <div class="slot" id="slot-resume" data-role="resume">
+      <div class="slot-label">A — Resume</div>
+      <div class="slot-drop">
+        <svg class="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M14 3v4a1 1 0 001 1h4"/>
+          <path d="M6 21h12a1 1 0 001-1V8l-5-5H6a1 1 0 00-1 1v16a1 1 0 001 1z"/>
+        </svg>
+        <p class="slot-text">Drag file or <span class="slot-link">browse</span></p>
+        <p class="slot-hint">.pdf · .docx · .txt</p>
+        <input type="file" id="input-resume" accept=".pdf,.docx,.txt" hidden>
+      </div>
+      <div class="slot-filename" id="filename-resume"></div>
+    </div>
+
+    <div class="scan-divider">
+      <div class="scan-line"></div>
+      <button id="scan-btn" class="scan-btn" disabled>
+        <span class="scan-btn-label">Run Scan</span>
+        <span class="scan-btn-arrow">→</span>
+      </button>
+    </div>
+
+    <div class="slot" id="slot-job" data-role="job_description">
+      <div class="slot-label">B — Job Description</div>
+      <div class="slot-drop">
+        <svg class="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M9 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z"/>
+          <path d="M9 12h6M9 16h6M9 8h2"/>
+        </svg>
+        <p class="slot-text">Drag file or <span class="slot-link">browse</span></p>
+        <p class="slot-hint">.pdf · .docx · .txt</p>
+        <input type="file" id="input-job" accept=".pdf,.docx,.txt" hidden>
+      </div>
+      <div class="slot-filename" id="filename-job"></div>
+    </div>
+  </section>
+
+  <section class="status-line" id="status-line" aria-live="polite"></section>
+
+  <section class="results" id="results" hidden>
+
+    <div class="gauge-panel">
+      <svg class="gauge" viewBox="0 0 220 220">
+        <circle class="gauge-track" cx="110" cy="110" r="92"/>
+        <circle class="gauge-fill" id="gauge-fill" cx="110" cy="110" r="92"/>
+      </svg>
+      <div class="gauge-readout">
+        <span id="gauge-number">0</span><span class="gauge-percent">%</span>
+        <span class="gauge-caption">match score</span>
+      </div>
+    </div>
+
+    <div class="result-meta">
+      <div class="meta-row">
+        <span class="meta-key">Skill coverage (Trie)</span>
+        <span class="meta-val" id="meta-cosine">—</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Keyword coverage (Top-K Heap)</span>
+        <span class="meta-val" id="meta-coverage">—</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Resume tokens scanned</span>
+        <span class="meta-val" id="meta-resume-words">—</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Job description tokens scanned</span>
+        <span class="meta-val" id="meta-job-words">—</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Verdict</span>
+        <span class="meta-val" id="meta-verdict">—</span>
+      </div>
+    </div>
+
+    <div class="keyword-columns">
+      <div class="kw-col kw-col-match">
+        <h3><span class="dot dot-match"></span>Matched keywords <span class="kw-count" id="count-match"></span></h3>
+        <div class="kw-chips" id="chips-match"></div>
+      </div>
+      <div class="kw-col kw-col-missing">
+        <h3><span class="dot dot-missing"></span>Missing keywords <span class="kw-count" id="count-missing"></span></h3>
+        <div class="kw-chips" id="chips-missing"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>Trie + custom heap + hash sets under the hood, no ML libraries · keyword overlap is a signal, not a verdict — read the missing list, don't just chase the score.</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
